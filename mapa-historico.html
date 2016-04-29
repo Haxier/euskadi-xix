@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Bermeo en el siglo XIX</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+</head>
+<body>
+
+
+<div id='map'></div>
+<script>
+L.mapbox.accessToken = 'pk.eyJ1IjoiaGF4aWVyIiwiYSI6ImNpZXplNDdsZTAwbnB0NGx0bWVtOGNuMmYifQ.5j7geQFg0v801Sdo_AmvlQ';
+var imageUrl = '49006001.gif',
+    // Urbanización. Bermeo (Bizkaia). Plano de Atlas realizado por Francisco Coello y Pascual Madoz, a mediados del siglo XIX, para el 
+    // Diccionario Geográfico-Estadístico-Histórico*/
+
+    // This is the trickiest part - you'll need accurate coordinates for the
+    // corners of the image. You can find and create appropriate values at
+    // http://maps.nypl.org/warper/ or
+    // http://www.georeferencer.org/
+    imageBounds = L.latLngBounds([
+        [43.418046, -2.72845],
+        [43.422971, -2.71744]]);
+
+var map = L.mapbox.map('map', 'mapbox.streets')
+    .fitBounds(imageBounds);
+
+// See full documentation for the ImageOverlay type:
+// http://leafletjs.com/reference.html#imageoverlay
+var overlay = L.imageOverlay(imageUrl, imageBounds)
+    .addTo(map);
+var credits = L.control.attribution().addTo(map);
+credits.addAttribution("Mapa desarrollado por <a target='_blank' href='http://twitter.com/asier_goik'>Asier Goikoetxea</a>");
+
+
+</script>
+
+
+</body>
+</html>
