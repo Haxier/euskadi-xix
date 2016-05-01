@@ -9,10 +9,53 @@
 <style>
   body { margin:0; padding:0; }
   #map { position:absolute; top:0; bottom:0; width:100%; }
+  .menu-ui {
+  background:#fff;
+  position:absolute;
+  top:10px;right:10px;
+  z-index:1;
+  border-radius:3px;
+  width:120px;
+  border:1px solid rgba(0,0,0,0.4);
+  }
+  .menu-ui a {
+    font-size:13px;
+    color:#404040;
+    display:block;
+    margin:0;padding:0;
+    padding:10px;
+    text-decoration:none;
+    border-bottom:1px solid rgba(0,0,0,0.25);
+    text-align:center;
+    }
+    .menu-ui a:first-child {
+      border-radius:3px 3px 0 0;
+      }
+    .menu-ui a:last-child {
+      border:none;
+      border-radius:0 0 3px 3px;
+      }
+    .menu-ui a:hover {
+      background:#f8f8f8;
+      color:#404040;
+      }
+    .menu-ui a.active,
+    .menu-ui a.active:hover {
+      background:#3887BE;
+      color:#FFF;
+      }
 </style>
 </head>
 <body>
+<!-- jQuery is required for this example. -->
+<script src='https://code.jquery.com/jquery-1.11.0.min.js'></script>
 
+<nav class='menu-ui'>
+  <a href='#' class='active' data-filter='bermeo'>Bermeo</a>
+  <a href='#' data-filter='bilbao'>1900-1930</a>
+  <a href='#' data-filter='durango'>1931-1970</a>
+  <a href='#' data-filter='gernika'>1971-2010</a>
+</nav>
 
 <div id='map'></div>
 <script>
@@ -39,6 +82,19 @@ var overlay = L.imageOverlay(imageUrl, imageBounds)
 var credits = L.control.attribution().addTo(map);
 credits.addAttribution("Mapa desarrollado por <a target='_blank' href='http://twitter.com/asier_goik'>Asier Goikoetxea</a>");
 
+$('.menu-ui a').on('click', function() {
+    // For each filter link, get the 'data-filter' attribute value.
+    var filter = $(this).data('filter');
+    console.log("se ha seleccionado una ciudad");
+    console.log(filter);
+    imageBounds = L.latLngBounds([
+        [43.418046, -2.72845],
+        [43.422971, -2.71744]]);
+
+  map.fitBounds(imageBounds);
+
+    return false;
+});
 
 </script>
 
