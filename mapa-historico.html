@@ -44,6 +44,32 @@
       background:#3887BE;
       color:#FFF;
       }
+  .ui-opacity {
+  background:#FFF;
+  position:absolute;
+  left:10px;
+  top:70px;
+  height:200px;
+  width:28px;
+  border:1px solid rgba(0,0,0,0.4);
+  border-radius:3px;
+  z-index:1000;
+  }
+.ui-opacity .handle {
+  position:absolute;
+  background:#404040;
+  left:0;
+  top:20px;
+  width:26px;
+  height:10px;
+  border-radius:1px;
+  cursor:pointer;
+  cursor:ns-resize;
+  }
+.ui-opacity .handle:hover {
+  background:#303030;
+}
+
 </style>
 </head>
 <body>
@@ -52,32 +78,40 @@
 
 <nav class='menu-ui'>
   <a href='#' class='active' data-filter='bermeo'>Bermeo</a>
-  <a href='#' data-filter='bilbao'>1900-1930</a>
-  <a href='#' data-filter='durango'>1931-1970</a>
-  <a href='#' data-filter='gernika'>1971-2010</a>
+  <a href='#' data-filter='bilbao'>Bilbao</a>
+  <a href='#' data-filter='durango'>Durango</a>
+  <a href='#' data-filter='gernika'>Gernika</a>
 </nav>
-
+<div id='control' class='ui-opacity'>
+  <div id='handle' class='handle'></div>
+</div>
 <div id='map'></div>
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoiaGF4aWVyIiwiYSI6ImNpZXplNDdsZTAwbnB0NGx0bWVtOGNuMmYifQ.5j7geQFg0v801Sdo_AmvlQ';
-var imageUrl = '49006001.gif',
-    // Urbanización. Bermeo (Bizkaia). Plano de Atlas realizado por Francisco Coello y Pascual Madoz, a mediados del siglo XIX, para el 
-    // Diccionario Geográfico-Estadístico-Histórico*/
+var handle = document.getElementById('handle'),
+    start = false,
+    startTop;
 
-    // This is the trickiest part - you'll need accurate coordinates for the
-    // corners of the image. You can find and create appropriate values at
-    // http://maps.nypl.org/warper/ or
-    // http://www.georeferencer.org/
-    imageBounds = L.latLngBounds([
+    // Atlas realizado por Francisco Coello y Pascual Madoz, a mediados del siglo XIX, para el 
+    // Diccionario Geográfico-Estadístico-Histórico
+var bermeoUrl = '49006001.gif',
+    // This is the trickiest part - you'll need accurate coordinates for the corners of the image.
+    bermeoBounds = L.latLngBounds([
         [43.418046, -2.72845],
         [43.422971, -2.71744]]);
+var bilbaoUrl = 'bilbao.png',
+    bilbaoBounds = L.latLngBounds([
+        [43.252400, -2.92800],
+        [43.263090, -2.92000]]);
 
 var map = L.mapbox.map('map', 'mapbox.streets')
-    .fitBounds(imageBounds);
+    .fitBounds(bilbaoBounds);
 
 // See full documentation for the ImageOverlay type:
 // http://leafletjs.com/reference.html#imageoverlay
-var overlay = L.imageOverlay(imageUrl, imageBounds)
+var overlay_bermeo = L.imageOverlay(bermeoUrl, bermeoBounds)
+    .addTo(map);
+var overlay_bilbao = L.imageOverlay(bilbaoUrl, bilbaoBounds)
     .addTo(map);
 var credits = L.control.attribution().addTo(map);
 credits.addAttribution("Mapa desarrollado por <a target='_blank' href='http://twitter.com/asier_goik'>Asier Goikoetxea</a>");
@@ -87,15 +121,38 @@ $('.menu-ui a').on('click', function() {
     var filter = $(this).data('filter');
     console.log("se ha seleccionado una ciudad");
     console.log(filter);
-    imageBounds = L.latLngBounds([
-        [43.418046, -2.72845],
-        [43.422971, -2.71744]]);
-
-  map.fitBounds(imageBounds);
-
+    if(filter=='bermeo'){
+      bermeoBounds = L.latLngBounds([
+          [43.429046, -2.72845],
+          [43.421971, -2.71744]]);
+      map.fitBounds(bermeoBounds);
+    }else if (filter=='bilbao') {
+      bilbaoBounds = L.latLngBounds([
+          [43.252400, -2.92800],
+          [43.263090, -2.92000]]);
+      map.fitBounds(bilbaoBounds);
+    };
     return false;
 });
+document.onmousemove = function(e) {
+    if (!start) return;
+    // Adjust control.
+    handle.style.top = Math.max(-5, Math.min(195, startTop + parseInt(e.clientY, 10) - start)) + 'px';
+    // Adjust opacity.
+    overlay_bermeo.setOpacity(1 - (handle.offsetTop / 200));
+    overlay_bilbao.setOpacity(1 - (handle.offsetTop / 200));
+};
 
+handle.onmousedown = function(e) {
+    // Record initial positions.
+    start = parseInt(e.clientY, 10);
+    startTop = handle.offsetTop - 5;
+    return false;
+};
+
+document.onmouseup = function(e) {
+    start = null;
+};
 </script>
 
 
